@@ -1,3 +1,3 @@
-# rpctimeserv
+# rpctimehttp
 
-    go get github.com/daved/rpctimeserv
+    go get github.com/daved/rpctimehttp
