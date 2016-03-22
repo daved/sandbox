@@ -12,8 +12,8 @@ type node struct {
 	multiplexer *http.ServeMux
 }
 
-func newNode() (*node, error) {
-	ts, err := rpctime.NewClient(":19876", time.Second*6)
+func newNode(rpcPort string) (*node, error) {
+	ts, err := rpctime.NewClient(rpcPort, time.Second*6)
 	if err != nil {
 		return nil, err
 	}
