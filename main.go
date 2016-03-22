@@ -1,15 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/codemodus/parth"
 	"github.com/daved/rpctime"
 )
+
+type TimeJSON struct {
+	Time string `json:"time"`
+}
+
+type StatsJSON struct {
+	RPCCount uint64 `json:"rpc_count"`
+}
 
 type node struct {
 	timeServer  *rpctime.Client
@@ -33,19 +41,25 @@ func (h *node) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.multiplexer.ServeHTTP(w, r)
 }
 
-func (n *node) localTimeHandler(w http.ResponseWriter, r *http.Request) {
-	t := time.Now().String()
+func (n *node) localHandler(w http.ResponseWriter, r *http.Request) {
+	t := &TimeJSON{time.Now().String()}
 
-	w.Write([]byte(t))
+	b, err := json.Marshal(t)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
-func (n *node) remoteTimeHandler(w http.ResponseWriter, r *http.Request) {
-	zoneID, err := parth.SubSegToString(r.URL.Path, "zone")
+func (n *node) remoteHandler(w http.ResponseWriter, r *http.Request) {
+	zoneID, err := parth.SubSegToString(r.URL.Path, "remote")
 	if err != nil || zoneID == "" {
 		zoneID = "GMT"
 	}
 
-	t, err := n.timeServer.Time(zoneID)
+	res, err := n.timeServer.Time(zoneID)
 	if err != nil {
 		if err.Error() == rpctime.ErrZoneNotFound.Error() {
 			http.Error(w, "Unprocessable Entity", 422)
@@ -56,26 +70,41 @@ func (n *node) remoteTimeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(t))
-}
+	t := &TimeJSON{res}
 
-func (n *node) statsHandler(w http.ResponseWriter, r *http.Request) {
-	ct, err := n.timeServer.Stats()
+	b, err := json.Marshal(t)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(strconv.FormatUint(ct, 10)))
+	w.Write(b)
+}
+
+func (n *node) statsHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := n.timeServer.Stats()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	s := &StatsJSON{res}
+
+	b, err := json.Marshal(s)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
 func (n *node) mux() *http.ServeMux {
 	m := http.NewServeMux()
 
-	m.HandleFunc("/time/local", n.localTimeHandler)
-	m.HandleFunc("/time/remote", n.remoteTimeHandler)
-	m.HandleFunc("/time/remote/zone/", n.remoteTimeHandler)
-	m.HandleFunc("/time/stats", n.statsHandler)
+	m.HandleFunc("/api/local", n.localHandler)
+	m.HandleFunc("/api/remote/", n.remoteHandler)
+	m.HandleFunc("/api/stats", n.statsHandler)
 
 	return m
 }
