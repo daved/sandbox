@@ -14,8 +14,8 @@ type Client struct {
 	timeout time.Duration
 }
 
-func NewClient(dsn string, timeout time.Duration) (*Client, error) {
-	conn, err := net.DialTimeout("tcp", dsn, timeout)
+func NewClient(addr string, timeout time.Duration) (*Client, error) {
+	conn, err := net.DialTimeout("tcp", addr, timeout)
 	if err != nil {
 		return nil, err
 	}
