@@ -38,6 +38,9 @@ func (r *RPC) Time(zone string, curTime *time.Time) error {
 }
 
 func (r *RPC) Stats(_ bool, reqs *uint64) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	*reqs = r.reqs
 
 	return nil
