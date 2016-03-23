@@ -9,16 +9,16 @@ import (
 	"github.com/daved/rpctime"
 )
 
-type TimeJSON struct {
+type timeJSON struct {
 	Time time.Time `json:"time"`
 }
 
-type StatsJSON struct {
+type statsJSON struct {
 	RPCCount uint64 `json:"rpc_count"`
 }
 
 func (n *node) localHandler(w http.ResponseWriter, r *http.Request) {
-	t := &TimeJSON{time.Now()}
+	t := &timeJSON{time.Now()}
 
 	b, err := json.Marshal(t)
 	if err != nil {
@@ -46,7 +46,7 @@ func (n *node) remoteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := &TimeJSON{res}
+	t := &timeJSON{res}
 
 	b, err := json.Marshal(t)
 	if err != nil {
@@ -64,7 +64,7 @@ func (n *node) statsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s := &StatsJSON{res}
+	s := &statsJSON{res}
 
 	b, err := json.Marshal(s)
 	if err != nil {

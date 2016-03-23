@@ -25,8 +25,8 @@ func newNode(rpcPort string) (*node, error) {
 	return n, nil
 }
 
-func (h *node) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h.multiplexer.ServeHTTP(w, r)
+func (n *node) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	n.multiplexer.ServeHTTP(w, r)
 }
 
 func (n *node) mux() *http.ServeMux {
