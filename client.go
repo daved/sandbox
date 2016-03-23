@@ -55,15 +55,15 @@ func (c *Client) manageConn() {
 	}
 }
 
-func (c *Client) Time(zone string) (string, error) {
+func (c *Client) Time(zone string) (time.Time, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	var curTime string
+	var curTime *time.Time
 
 	err := c.rpcCli.Call("RPC.Time", zone, &curTime)
 
-	return curTime, err
+	return *curTime, err
 }
 
 func (c *Client) Stats() (uint64, error) {

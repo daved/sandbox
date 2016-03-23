@@ -21,7 +21,7 @@ func NewRPC() *RPC {
 	return &RPC{}
 }
 
-func (r *RPC) Time(zone string, curTime *string) error {
+func (r *RPC) Time(zone string, curTime *time.Time) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -32,7 +32,7 @@ func (r *RPC) Time(zone string, curTime *string) error {
 		return ErrZoneNotFound
 	}
 
-	*curTime = time.Now().In(loc).String()
+	*curTime = time.Now().In(loc)
 
 	return nil
 }

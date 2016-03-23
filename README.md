@@ -12,12 +12,12 @@ and does not resolve many common concerns with production-ready microservices.
 type Client
     func NewClient(dsn string, timeout time.Duration) (*Client, error)
     func (c *Client) Stats() (uint64, error)
-    func (c *Client) Time(zone string) (string, error)
+    func (c *Client) Time(zone string) (time.Time, error)
 type RPC
     func NewRPC() *RPC
     func (r *RPC) Ping(_ bool, _ *bool) error
     func (r *RPC) Stats(_ bool, reqs *uint64) error
-    func (r *RPC) Time(zone string, curTime *string) error
+    func (r *RPC) Time(zone string, curTime *time.Time) error
 ```
 
 ## Usage (Server)
