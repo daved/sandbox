@@ -10,7 +10,7 @@ import (
 )
 
 type TimeJSON struct {
-	Time string `json:"time"`
+	Time time.Time `json:"time"`
 }
 
 type StatsJSON struct {
@@ -18,7 +18,7 @@ type StatsJSON struct {
 }
 
 func (n *node) localHandler(w http.ResponseWriter, r *http.Request) {
-	t := &TimeJSON{time.Now().String()}
+	t := &TimeJSON{time.Now()}
 
 	b, err := json.Marshal(t)
 	if err != nil {
