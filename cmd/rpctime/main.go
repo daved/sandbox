@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net"
 	"net/rpc"
@@ -9,9 +10,15 @@ import (
 )
 
 func main() {
+	var port string
+
+	flag.StringVar(&port, "port", ":19876", "port on which to handle rpc requests")
+
+	flag.Parse()
+
 	rpc.Register(rpctime.NewRPC())
 
-	l, err := net.Listen("tcp", ":19876")
+	l, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalln(err)
 	}
