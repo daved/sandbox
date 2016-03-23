@@ -37,8 +37,12 @@ func (r *RPC) Time(zone string, curTime *string) error {
 	return nil
 }
 
-func (r *RPC) Stats(skip bool, reqs *uint64) error {
+func (r *RPC) Stats(_ bool, reqs *uint64) error {
 	*reqs = r.reqs
 
+	return nil
+}
+
+func (r *RPC) Ping(_ bool, _ *bool) error {
 	return nil
 }
