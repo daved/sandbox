@@ -59,11 +59,11 @@ func (c *Client) Time(zone string) (time.Time, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	var curTime *time.Time
+	var curTime time.Time
 
 	err := c.rpcCli.Call("RPC.Time", zone, &curTime)
 
-	return *curTime, err
+	return curTime, err
 }
 
 func (c *Client) Stats() (uint64, error) {
