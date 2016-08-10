@@ -15,7 +15,7 @@ build:
     - script:
         name: go get
         code: |
-          go get
+          go get -u github.com/codemodus/mixmux
 
     - script:
         name: go build
