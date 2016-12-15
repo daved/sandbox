@@ -1,5 +1,6 @@
+box: google/golang
+
 dev:
-  box: google/golang
   steps:
     - internal/watch:
       code: |
@@ -10,8 +11,8 @@ dev:
       ports: "5454"
 
 build:
-  box: google/golang
   steps:
+    - wercker/golint
     - script:
         name: go get
         code: |
