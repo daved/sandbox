@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
 )
 
 func main() {
@@ -18,17 +17,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	go func() {
-		for {
-			b := make([]byte, 1024)
-			n, err := l.Read(b)
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			fmt.Print(string(b[:n]))
+	for {
+		b := make([]byte, 1024)
+		n, err := l.Read(b)
+		if err != nil {
+			log.Fatalln(err)
 		}
-	}()
 
-	time.Sleep(time.Second * 200)
+		fmt.Print(string(b[:n]))
+	}
 }
