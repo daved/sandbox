@@ -26,14 +26,12 @@ type personThought struct {
 
 type personThoughts []personThought
 
-func (pts *personThoughts) person() *person {
-	dpts := *pts
-	p := &dpts[0].person
-	p.Thoughts = make([]*thought, len(dpts))
-	for k := range dpts {
-		p.Thoughts[k] = &dpts[k].thought
+func (pts personThoughts) person() *person {
+	p := &pts[0].person
+	p.Thoughts = make([]*thought, len(pts))
+	for k := range pts {
+		p.Thoughts[k] = &pts[k].thought
 	}
-
 	return p
 }
 
@@ -43,8 +41,8 @@ type DB struct {
 }
 
 func (db *DB) personByName(name string) (*person, error) {
-	pts := &personThoughts{}
-	err := db.Select(pts, `
+	pts := personThoughts{}
+	err := db.Select(&pts, `
 		SELECT p.*, t.id "t.id", t.name "t.name"
 		FROM person p, thought t, person_thought pt
 		WHERE p.name = ?
