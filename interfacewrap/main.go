@@ -8,6 +8,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type adaptable interface {
+	Len() int
+}
+
 type person struct {
 	ID       int
 	Name     string
@@ -26,6 +30,11 @@ type personThought struct {
 
 type personThoughts []personThought
 
+func (pts *personThoughts) Len() int {
+	pt := *pts
+	return len(pt)
+}
+
 func (pts personThoughts) person() *person {
 	p := &pts[0].person
 	p.Thoughts = make([]*thought, len(pts))
@@ -40,8 +49,8 @@ type DB struct {
 	*sqlx.DB
 }
 
-func (db *DB) personByName(name string, dest interface{}) error {
-	rows, err := db.Queryx(`
+func (db *DB) personByName(name string, dest adaptable) error {
+	err := db.Select(dest, `
 		SELECT p.*, t.id "t.id", t.name "t.name"
 		FROM person p, thought t, person_thought pt
 		WHERE p.name = ?
@@ -52,15 +61,11 @@ func (db *DB) personByName(name string, dest interface{}) error {
 		return err
 	}
 
-	if !rows.Next() {
-		return fmt.Errorf("person not found")
+	if dest.Len() == 0 {
+		return fmt.Errorf("not found")
 	}
 
-	if err = rows.StructScan(dest); err != nil {
-		return err
-	}
-
-	return rows.Close()
+	return nil
 }
 
 func main() {
@@ -73,8 +78,8 @@ func main() {
 	sdb.MapperFunc(kace.Snake)
 	db := &DB{sdb}
 
-	pt := &personThoughts{}
-	err = db.personByName("Bob", pt)
+	pt := personThoughts{}
+	err = db.personByName("Bob", &pt)
 	trip(err)
 
 	for _, v := range pt.person().Thoughts {
