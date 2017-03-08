@@ -1,51 +1,59 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
+	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/codemodus/sigmon"
-	"github.com/codemodus/vitals"
-	"github.com/tylerb/graceful"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("%s [%s] %s\n", time.Now().Format(time.RFC3339), r.Method, r.URL.Path)
 	fmt.Fprintln(w, "systemd")
 }
 
 func main() {
+	fmt.Println("hello")
+
+	// setup and parse flags
+	port := ":12121"
+	flag.StringVar(
+		&port, "port", port,
+		"port to listen on for http requests",
+	)
+	flag.Parse()
+
 	// ignore os signals
 	sm := sigmon.New(nil)
 	sm.Run()
 
-	// setup and cleanup pid file
-	cleanupPID, err := vitals.SetupPIDFile()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	defer cleanupPID()
-
 	// setup http server
-	m := http.NewServeMux()
-	m.HandleFunc("/", handler)
-	s := &graceful.Server{
-		Timeout: time.Second * 3,
-		Server: &http.Server{
-			Handler: m,
-			Addr:    ":12122",
-		},
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", handler)
+	s := &http.Server{
+		Handler: mux,
+		Addr:    port,
 	}
 
 	// handle os signals
 	sm.Set(func(*sigmon.SignalMonitor) {
-		s.Stop(time.Second * 3)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if err := s.Shutdown(ctx); err != nil {
+			log.Println(err)
+		}
+
+		fmt.Println("i'm melting!")
 	})
 
 	// listen and serve
-	if err = s.ListenAndServe(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	if err := s.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		fmt.Println(err)
 	}
+
+	fmt.Println("goodbye")
 }
