@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 )
 
 func main() {
@@ -26,6 +27,7 @@ func trip(err error, format string, a ...interface{}) {
 	}
 
 	if err != errFlagParse {
+		fmt.Printf("%s: ", path.Base(os.Args[0]))
 		fmt.Printf(format, a...)
 	}
 	os.Exit(1)
