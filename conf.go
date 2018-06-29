@@ -141,8 +141,8 @@ func (c *Conf) parseFlags() error {
 	default:
 		fmt.Fprintf(
 			c.main.fs.Output(),
-			"%q is not a valid subcommand: [%s]\n",
-			c.cmd, c.file.fs.Name(),
+			"%q is not a valid subcommand, those available are: [%s|%s]\n",
+			c.cmd, c.file.fs.Name(), c.test.fs.Name(),
 		)
 
 		return errFlagParse
