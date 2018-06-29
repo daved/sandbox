@@ -76,7 +76,7 @@ func makeTestConf() testConf {
 }
 
 func (c *testConf) attachFlags() {
-	c.fs.IntVar(&c.other, "other", c.other, "file to process")
+	c.fs.IntVar(&c.other, "other", c.other, "some integer")
 }
 
 func (c *testConf) normalize() error {
