@@ -6,7 +6,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"io"
 )
 
 // AESEncDec ...
@@ -40,7 +39,7 @@ func New(key []byte) (*AESEncDec, error) {
 // Encrypt ...
 func (ed *AESEncDec) Encrypt(src []byte) ([]byte, error) {
 	nonce := make([]byte, ed.aead.NonceSize())
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+	if _, err := rand.Read(nonce); err != nil {
 		return nil, err
 	}
 	nLen := base64.URLEncoding.EncodedLen(len(nonce))
