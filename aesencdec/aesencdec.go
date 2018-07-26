@@ -66,5 +66,7 @@ func (ed *AESEncDec) Decrypt(src []byte) ([]byte, error) {
 	}
 	dbuf = dbuf[:n]
 
-	return ed.aead.Open(dbuf[:0], dbuf[:ed.aead.NonceSize()], dbuf[ed.aead.NonceSize():], nil)
+	nLen := ed.aead.NonceSize()
+
+	return ed.aead.Open(dbuf[:0], dbuf[:nLen], dbuf[nLen:], nil)
 }
