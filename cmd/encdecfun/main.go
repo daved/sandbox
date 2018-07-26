@@ -40,4 +40,13 @@ func main() {
 		return
 	}
 	fmt.Println(string(dec))
+
+	if len(os.Args) > 1 && len(os.Args[1]) > 0 {
+		out, err := aesed.Decrypt([]byte(os.Args[1]))
+		if err != nil {
+			fmt.Printf("cannot decrypt user input: %s", err)
+			return
+		}
+		fmt.Println(string(out))
+	}
 }

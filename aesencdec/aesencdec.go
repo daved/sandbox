@@ -11,8 +11,7 @@ import (
 
 // AESEncDec ...
 type AESEncDec struct {
-	aead  cipher.AEAD
-	nonce []byte
+	aead cipher.AEAD
 }
 
 // New ...
@@ -31,14 +30,8 @@ func New(key []byte) (*AESEncDec, error) {
 		return nil, err
 	}
 
-	nonce := make([]byte, aead.NonceSize())
-	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return nil, err
-	}
-
 	ed := &AESEncDec{
-		aead:  aead,
-		nonce: nonce,
+		aead: aead,
 	}
 
 	return ed, nil
@@ -46,22 +39,32 @@ func New(key []byte) (*AESEncDec, error) {
 
 // Encrypt ...
 func (ed *AESEncDec) Encrypt(src []byte) ([]byte, error) {
-	sealed := ed.aead.Seal(src[:0], ed.nonce, src, nil)
+	nonce := make([]byte, ed.aead.NonceSize())
+	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+		return nil, err
+	}
+	nLen := base64.URLEncoding.EncodedLen(len(nonce))
 
-	dst := make([]byte, base64.URLEncoding.EncodedLen(len(sealed)))
-	base64.URLEncoding.Encode(dst, sealed)
+	sealed := ed.aead.Seal(src[:0], nonce, src, nil)
+	sLen := base64.URLEncoding.EncodedLen(len(sealed))
+
+	dst := make([]byte, nLen+sLen)
+	base64.URLEncoding.Encode(dst, nonce)
+	base64.URLEncoding.Encode(dst[nLen:], sealed)
 
 	return dst, nil
 }
 
 // Decrypt ...
 func (ed *AESEncDec) Decrypt(src []byte) ([]byte, error) {
-	dbuf := make([]byte, base64.URLEncoding.DecodedLen(len(src)))
+	sLen := base64.URLEncoding.DecodedLen(len(src))
+
+	dbuf := make([]byte, sLen)
 	n, err := base64.URLEncoding.Decode(dbuf, src)
 	if err != nil {
 		return nil, err
 	}
 	dbuf = dbuf[:n]
 
-	return ed.aead.Open(dbuf[:0], ed.nonce, dbuf, nil)
+	return ed.aead.Open(dbuf[:0], dbuf[:ed.aead.NonceSize()], dbuf[ed.aead.NonceSize():], nil)
 }
