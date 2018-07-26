@@ -46,7 +46,7 @@ func New(key []byte) (*AESEncDec, error) {
 
 // Encrypt ...
 func (ed *AESEncDec) Encrypt(src []byte) ([]byte, error) {
-	sealed := ed.aead.Seal(nil, ed.nonce, src, nil)
+	sealed := ed.aead.Seal(src[:0], ed.nonce, src, nil)
 
 	dst := make([]byte, base64.URLEncoding.EncodedLen(len(sealed)))
 	base64.URLEncoding.Encode(dst, sealed)
@@ -63,5 +63,5 @@ func (ed *AESEncDec) Decrypt(src []byte) ([]byte, error) {
 	}
 	dbuf = dbuf[:n]
 
-	return ed.aead.Open(nil, ed.nonce, dbuf, nil)
+	return ed.aead.Open(dbuf[:0], ed.nonce, dbuf, nil)
 }
