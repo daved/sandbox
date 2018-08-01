@@ -5,18 +5,24 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
-	"errors"
+	"fmt"
+)
+
+var (
+	// ErrBadKeySize ...
+	ErrBadKeySize = fmt.Errorf("key must be 16 or 32 bytes to select AES-128 or AES-256")
 )
 
 // AESEncDec ...
 type AESEncDec struct {
 	aead cipher.AEAD
+	b64  *base64.Encoding
 }
 
 // New ...
 func New(key []byte) (*AESEncDec, error) {
 	if len(key) != 16 && len(key) != 32 {
-		return nil, errors.New("key must be 16 or 32 bytes to select AES-128 or AES-256")
+		return nil, ErrBadKeySize
 	}
 
 	block, err := aes.NewCipher(key)
@@ -31,6 +37,7 @@ func New(key []byte) (*AESEncDec, error) {
 
 	ed := &AESEncDec{
 		aead: aead,
+		b64:  base64.URLEncoding.WithPadding(base64.NoPadding),
 	}
 
 	return ed, nil
@@ -42,24 +49,24 @@ func (ed *AESEncDec) Encrypt(src []byte) ([]byte, error) {
 	if _, err := rand.Read(nonce); err != nil {
 		return nil, err
 	}
-	nLen := base64.URLEncoding.EncodedLen(len(nonce))
+	nLen := ed.b64.EncodedLen(len(nonce))
 
 	sealed := ed.aead.Seal(src[:0], nonce, src, nil)
-	sLen := base64.URLEncoding.EncodedLen(len(sealed))
+	sLen := ed.b64.EncodedLen(len(sealed))
 
 	dst := make([]byte, nLen+sLen)
-	base64.URLEncoding.Encode(dst, nonce)
-	base64.URLEncoding.Encode(dst[nLen:], sealed)
+	ed.b64.Encode(dst, nonce)
+	ed.b64.Encode(dst[nLen:], sealed)
 
 	return dst, nil
 }
 
 // Decrypt ...
 func (ed *AESEncDec) Decrypt(src []byte) ([]byte, error) {
-	sLen := base64.URLEncoding.DecodedLen(len(src))
+	sLen := ed.b64.DecodedLen(len(src))
 
 	dbuf := make([]byte, sLen)
-	n, err := base64.URLEncoding.Decode(dbuf, src)
+	n, err := ed.b64.Decode(dbuf, src)
 	if err != nil {
 		return nil, err
 	}
