@@ -25,6 +25,15 @@ func main() {
 	flag.Var(&migdir, "migdir", "migration direction (up|dn)")
 	flag.Parse()
 
+	var err error
+	err = tripCheckString(err, dbuser, "dbuser")
+	err = tripCheckString(err, dbpass, "dbpass")
+	err = tripCheckString(err, dbname, "dbname")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "bad configuration: %s\n", err)
+		return
+	}
+
 	db, err := newDataBase(dbuser, dbpass, dbname)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot create new database: %s\n", err)
