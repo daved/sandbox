@@ -81,3 +81,14 @@ func (d *direction) Set(value string) error {
 
 	return nil
 }
+
+type customer struct {
+	gorm.Model
+	Name   string
+	Orders []order
+}
+
+type order struct {
+	gorm.Model
+	Note string
+}
