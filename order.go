@@ -1,13 +1,18 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/codemodus/chain"
 	"github.com/codemodus/mixmux"
 )
 
-type orderDataProvider interface{}
+type orderDataProvider interface {
+	SelectOrder(context.Context, *GetOrderReq) (*OrderResp, error)
+	InsertOrder(context.Context, *AddOrderReq) (*OrderResp, error)
+	FindOrders(context.Context, *FndOrdersReq) (*OrdersResp, error)
+}
 
 type orderService struct {
 	db orderDataProvider

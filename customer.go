@@ -1,13 +1,17 @@
 package main
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/codemodus/chain"
 	"github.com/codemodus/mixmux"
 )
 
-type customerDataProvider interface{}
+type customerDataProvider interface {
+	SelectCustomer(context.Context, *GetCustomerReq) (*CustomerResp, error)
+	InsertCustomer(context.Context, *AddCustomerReq) (*CustomerResp, error)
+}
 
 type customerService struct {
 	db customerDataProvider
