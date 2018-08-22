@@ -19,11 +19,6 @@ func run() error {
 		dbpass = ""
 		dbname = ""
 		migdir = up
-
-		models = []interface{}{
-			&order{},
-			&customer{},
-		}
 	)
 
 	flag.StringVar(&dbuser, "dbuser", dbuser, "database username")
@@ -45,7 +40,7 @@ func run() error {
 		return fmt.Errorf("cannot create new database: %s", err)
 	}
 
-	if err = db.migrate(migdir, models...); err != nil {
+	if err = db.migrate(migdir, dataBaseModels()); err != nil {
 		return fmt.Errorf("cannot migrate database: %s", err)
 	}
 

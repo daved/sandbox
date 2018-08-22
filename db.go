@@ -82,6 +82,13 @@ func (d *direction) Set(value string) error {
 	return nil
 }
 
+func dataBaseModels() []interface{} {
+	return []interface{}{
+		&order{},
+		&customer{},
+	}
+}
+
 type customer struct {
 	gorm.Model
 	Name   string
