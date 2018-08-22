@@ -3,7 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
+
+	"github.com/codemodus/mixmux"
 )
 
 func main() {
@@ -19,12 +22,14 @@ func run() error {
 		dbpass = ""
 		dbname = ""
 		migdir = up
+		port   = ":4453"
 	)
 
 	flag.StringVar(&dbuser, "dbuser", dbuser, "database username")
 	flag.StringVar(&dbpass, "dbpass", dbpass, "database passname")
 	flag.StringVar(&dbname, "dbname", dbname, "database name")
 	flag.Var(&migdir, "migdir", "migration direction (up|dn)")
+	flag.StringVar(&port, "port", port, "http server port")
 	flag.Parse()
 
 	var err error
@@ -44,17 +49,21 @@ func run() error {
 		return fmt.Errorf("cannot migrate database: %s", err)
 	}
 
-	return nil
-}
+	m := mixmux.NewRouter(nil)
 
-func tripCheckString(err error, value, name string) error {
+	orderSvc, err := newOrderService(db)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot setup order service: %s", err)
 	}
 
-	if value == "" {
-		err = fmt.Errorf("%q cannot be empty", name)
+	customerSvc, err := newCustomerService(db)
+	if err != nil {
+		return fmt.Errorf("cannot setup customer service: %s", err)
 	}
 
-	return err
+	if err = applyRoutes(m, orderSvc, customerSvc); err != nil {
+		return fmt.Errorf("cannot apply routes: %s", err)
+	}
+
+	return http.ListenAndServe(port, m)
 }
