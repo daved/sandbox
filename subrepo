@@ -16,7 +16,7 @@ main() {
         mv "${file}" "./${proj}" || exit 1   
     done <<< "${files}"
 
-    git add "${proj}" || exit 1
+    git add . || exit 1
     git commit -m"Move ${proj} into subdir." || exit 1
 
     local storeDir="../SUB"
