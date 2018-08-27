@@ -1,30 +1,35 @@
 #!/usr/bin/env bash
 
+err() {
+    local msg="${1}"
+    echo "${msg}" >&2 && exit 1
+}
+
 main() {
     local proj="${1}"
 
-    git remote add "${proj}" "git@github.com:daved/${proj}.git" || exit 1
-    git fetch "${proj}" || exit 1
-    git merge --no-edit --allow-unrelated-histories "${proj}"/master || exit 1
+    git remote add "${proj}" "git@github.com:daved/${proj}.git" || err "cannot add remote"
+    git fetch "${proj}" || err "cannot fetch remote"
+    git merge --no-edit --allow-unrelated-histories "${proj}"/master || err "cannot merge remote"
 
     local files=$(git ls-tree -tr ${proj}/master --name-only)
-    [[ $? -eq 0 ]] || exit 1
+    [[ $? -eq 0 ]] || err "cannot get files from remote"
 
-    mkdir ${proj} || exit 1
+    mkdir ${proj} || err "cannot mkdir '${proj}'"
 
     while read -r file; do
-        mv "${file}" "./${proj}" || exit 1   
+        mv "${file}" "./${proj}" || err "cannot move file '${file}'"   
     done <<< "${files}"
 
-    git add . || exit 1
-    git commit -m"Move ${proj} into subdir." || exit 1
+    git add . || err "cannot add all"
+    git commit -m"Move ${proj} into subdir." || err "cannot commit move into subdir"
 
     local storeDir="../SUB"
 
-    mkdir -p "${storeDir}"
-    mv "../${proj}" "${storeDir}"
+    mkdir -p "${storeDir}" || err "cannot mkdir '${storeDir}'"
+    mv "../${proj}" "${storeDir}" || err "cannot move '../${proj}' to '${storeDir}'"
 
-    git remote remove "${proj}"
+    git remote remove "${proj}" || err "cannot remove remote"
 }
 
 main "${1}"
