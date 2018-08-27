@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+main() {
+    local proj="${1}"
+
+    git remote add "${proj}" "git@github.com:daved/${proj}.git" || exit 1
+    git fetch "${proj}" || exit 1
+    git merge --no-edit --allow-unrelated-histories "${proj}"/master || exit 1
+
+    local files=$(git ls-tree -tr ${proj}/master --name-only)
+    [[ $? -eq 0 ]] || exit 1
+
+    mkdir ${proj} || exit 1
+
+    while read -r file; do
+        mv "${file}" "./${proj}" || exit 1   
+    done <<< "${files}"
+
+    git add "${proj}" || exit 1
+    git commit -m"Move ${proj} into subdir." || exit 1
+
+    local storeDir="../SUB"
+
+    mkdir -p "${storeDir}"
+    mv "../${proj}" "${storeDir}"
+
+    git remote remove "${proj}"
+}
+
+main "${1}"
