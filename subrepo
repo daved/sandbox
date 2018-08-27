@@ -12,7 +12,7 @@ main() {
     git fetch "${proj}" || err "cannot fetch remote"
     git merge --no-edit --allow-unrelated-histories "${proj}"/master || err "cannot merge remote"
 
-    local files=$(git ls-tree -tr ${proj}/master --name-only)
+    local files=$(git ls-tree -t ${proj}/master --name-only)
     [[ $? -eq 0 ]] || err "cannot get files from remote"
 
     mkdir ${proj} || err "cannot mkdir '${proj}'"
