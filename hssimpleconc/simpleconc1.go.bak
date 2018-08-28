@@ -1,0 +1,55 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	c := userInput()
+
+	go handle(c)
+	handle(c)
+
+	fmt.Println("done")
+}
+
+func userInput() chan rune {
+	c := make(chan rune)
+
+	go func() {
+		defer close(c)
+
+		for {
+			s, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+
+			for _, r := range s[:len(s)-1] {
+				switch r {
+				case rune('0'):
+					return
+
+				default:
+					c <- r
+				}
+			}
+		}
+	}()
+
+	return c
+}
+
+func handle(c chan rune) {
+	for r := range c {
+		switch r {
+		case rune('1'):
+			fmt.Printf("c1 main: %c\n", r)
+
+		case rune('2'):
+			fmt.Printf("c2 main: %c\n", r)
+
+		default:
+			fmt.Printf("Illegal: %c\n", r)
+		}
+	}
+}
