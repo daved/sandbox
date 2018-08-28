@@ -1,0 +1,29 @@
+box: google/golang
+
+dev:
+  steps:
+    - internal/watch:
+      code: |
+        go get -u github.com/codemodus/mixmux
+        go build ./...
+        ./source
+      reload: true
+      ports: "5454"
+
+build:
+  steps:
+    - wercker/golint
+    - script:
+        name: go get
+        code: |
+          go get -u github.com/codemodus/mixmux
+
+    - script:
+        name: go build
+        code: |
+          go build ./...
+
+    - script:
+        name: go test
+        code: |
+          go test ./...
