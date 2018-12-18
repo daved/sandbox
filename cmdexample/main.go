@@ -22,7 +22,7 @@ func run() error {
 		return err
 	}
 
-	cs := clip.NewCommandSet(true,
+	cs := clip.NewCommandSet(
 		clip.NewCommand(cnf.file.fs, runFileFunc(cnf.file), nil),
 		clip.NewCommand(cnf.test.fs, runTestFunc(cnf.test), nil),
 	)
