@@ -34,8 +34,8 @@ func run() error {
 
 	app := clip.New(path.Base(os.Args[0]), cnf.main.fs, cs)
 
-	if err = app.NoisyParse(os.Args); err != nil {
-		return err
+	if err = app.Parse(os.Args); err != nil {
+		return app.UsageLong(err)
 	}
 
 	return app.Run()
