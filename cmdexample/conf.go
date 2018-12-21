@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 
 	"github.com/codemodus/clip"
@@ -9,13 +8,13 @@ import (
 
 // mainConf ---------
 type mainConf struct {
-	fs      *flag.FlagSet
+	fs      *clip.FlagSet
 	verbose bool
 }
 
 func newMainConf() *mainConf {
 	c := mainConf{
-		fs: flag.NewFlagSet("main", clip.FlagErrorHandling),
+		fs: clip.NewFlagSet("main"),
 	}
 
 	c.fs.BoolVar(&c.verbose, "v", c.verbose, "enable logging")
@@ -25,13 +24,13 @@ func newMainConf() *mainConf {
 
 // fileConf ---------
 type fileConf struct {
-	fs   *flag.FlagSet
+	fs   *clip.FlagSet
 	file string
 }
 
 func newFileConf() *fileConf {
 	c := fileConf{
-		fs:   flag.NewFlagSet("file", clip.FlagErrorHandling),
+		fs:   clip.NewFlagSet("file"),
 		file: "test_data",
 	}
 
@@ -50,13 +49,13 @@ func (c *fileConf) validate() error {
 
 // testConf ---------
 type testConf struct {
-	fs    *flag.FlagSet
+	fs    *clip.FlagSet
 	other int
 }
 
 func newTestConf() *testConf {
 	c := testConf{
-		fs:    flag.NewFlagSet("test", clip.FlagErrorHandling),
+		fs:    clip.NewFlagSet("test"),
 		other: 4,
 	}
 
