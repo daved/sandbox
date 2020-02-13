@@ -22,20 +22,24 @@ func run() error {
 		return err
 	}
 
+	filesCS := clip.NewCommandSet(
+		clip.NewCommand(cnf.filesRead.fs, newFilesRead(cnf.filesRead), nil),
+	)
+
 	getCS := clip.NewCommandSet(
 		clip.NewCommand(cnf.test.fs, runTestFunc(cnf.test), nil),
 	)
 
 	cs := clip.NewCommandSet(
+		clip.NewCommandNamespace("files", filesCS),
 		clip.NewCommandNamespace("get", getCS),
-		clip.NewCommand(cnf.file.fs, runFileFunc(cnf.file), nil),
 		clip.NewCommand(cnf.test.fs, runTestFunc(cnf.test), nil),
 	)
 
 	app := clip.New(path.Base(os.Args[0]), cnf.main.fs, cs)
 
 	if err = app.Parse(os.Args); err != nil {
-		return app.UsageLong(err)
+		return app.UsageLongHelp(err)
 	}
 
 	return app.Run()

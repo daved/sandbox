@@ -6,7 +6,6 @@ import (
 	"github.com/codemodus/clip"
 )
 
-// mainConf ---------
 type mainConf struct {
 	fs      *clip.FlagSet
 	verbose bool
@@ -22,32 +21,6 @@ func newMainConf() *mainConf {
 	return &c
 }
 
-// fileConf ---------
-type fileConf struct {
-	fs   *clip.FlagSet
-	file string
-}
-
-func newFileConf() *fileConf {
-	c := fileConf{
-		fs:   clip.NewFlagSet("file"),
-		file: "test_data",
-	}
-
-	c.fs.StringVar(&c.file, "f", c.file, "file to process")
-
-	return &c
-}
-
-func (c *fileConf) validate() error {
-	if c.file == "" {
-		return fmt.Errorf("file must not be empty string")
-	}
-
-	return nil
-}
-
-// testConf ---------
 type testConf struct {
 	fs    *clip.FlagSet
 	other int
@@ -74,17 +47,17 @@ func (c *testConf) validate() error {
 
 // Conf ... ---------
 type Conf struct {
-	cmd  string
-	main *mainConf
-	file *fileConf
-	test *testConf
+	cmd       string
+	main      *mainConf
+	filesRead *filesReadConf
+	test      *testConf
 }
 
 func newConf() (*Conf, error) {
 	c := Conf{
-		main: newMainConf(),
-		file: newFileConf(),
-		test: newTestConf(),
+		main:      newMainConf(),
+		filesRead: newFilesReadConf(),
+		test:      newTestConf(),
 	}
 
 	return &c, nil

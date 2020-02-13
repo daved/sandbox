@@ -9,10 +9,10 @@ require (
 	github.com/codemodus/kace v0.5.1
 	github.com/codemodus/mixmux v0.2.1
 	github.com/codemodus/parth v1.1.3
+	github.com/codemodus/relay v0.0.0-20200203050056-4fbe2a4e16fd
 	github.com/codemodus/sigmon v1.0.0
 	github.com/codemodus/vitals v0.1.0
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/golang/protobuf v1.3.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/gotk3/gotk3 v0.0.0-20190512183708-8365021fde1a
 	github.com/jinzhu/gorm v1.9.8
