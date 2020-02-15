@@ -22,8 +22,6 @@ github.com/codemodus/mixmux v0.2.1 h1:UeFe2iFQGhdC0Zpxh4WLkiKo91EZgrbrsR4ry0WQJb
 github.com/codemodus/mixmux v0.2.1/go.mod h1:0lRIgwq/QGREoAiK+dLAxVXJE5pnFceJs0AS7scue0U=
 github.com/codemodus/parth v1.1.3 h1:PnZTuKa3wc8UExkyOBa6cqEekMCBnb3Uvho+wstjnxs=
 github.com/codemodus/parth v1.1.3/go.mod h1:fz8nD3evZdks4HX+w3dJG9BaCClAHz096Rdp8516JSI=
-github.com/codemodus/relay v0.0.0-20200203050056-4fbe2a4e16fd h1:Wort9XjyceWC2pSQcnZkfQIDCiS5wfj04rb0wr7juTY=
-github.com/codemodus/relay v0.0.0-20200203050056-4fbe2a4e16fd/go.mod h1:bED5Z7LcepohR8o+MGbl9jGio6Qsmjhm6lwr/Bc+Obs=
 github.com/codemodus/sigmon v1.0.0 h1:zGu8UNfdZGSUkm7fBlTfpI34ZoENWTzHyEHxz9CWBkE=
 github.com/codemodus/sigmon v1.0.0/go.mod h1:ae3lWhst1Ra164THcemTZeoUqONdsQT4G0UnjV2cQ7E=
 github.com/codemodus/vitals v0.1.0 h1:jT0h8bn3EotGZFCrn3u+7SLs9RwNrdfURk2nhm/Ffpo=

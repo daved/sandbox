@@ -9,7 +9,6 @@ require (
 	github.com/codemodus/kace v0.5.1
 	github.com/codemodus/mixmux v0.2.1
 	github.com/codemodus/parth v1.1.3
-	github.com/codemodus/relay v0.0.0-20200203050056-4fbe2a4e16fd
 	github.com/codemodus/sigmon v1.0.0
 	github.com/codemodus/vitals v0.1.0
 	github.com/go-sql-driver/mysql v1.4.1
