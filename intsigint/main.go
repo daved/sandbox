@@ -12,11 +12,13 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	c := make(chan sigmon.Signal, 1)
+
 	sm := sigmon.New(nil)
-	var sig sigmon.Signal
 	sm.Set(func(s *sigmon.State) {
+		defer close(c)
 		cancel()
-		sig = s.Signal()
+		c <- s.Signal()
 		sm.Set(nil)
 	})
 	sm.Start()
@@ -31,7 +33,7 @@ func main() {
 
 	sm.Stop()
 	fmt.Println("end main")
-	if sig > 0 {
+	if sig, ok := <-c; ok {
 		fmt.Printf("received sig %q\n", sig)
 	}
 }
