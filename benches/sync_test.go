@@ -31,7 +31,7 @@ func BenchmarkAtomicGet(b *testing.B) {
 	t = v
 }
 
-func BenchmarkMutex(b *testing.B) {
+func BenchmarkMutexSet(b *testing.B) {
 	s := safeBool{}
 
 	b.ResetTimer()
