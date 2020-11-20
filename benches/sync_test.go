@@ -8,9 +8,11 @@ func BenchmarkAtomicSet(b *testing.B) {
 	a := atomicBool{}
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		a.setValue(true)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			a.setValue(true)
+		}
+	})
 }
 
 func BenchmarkAtomicGet(b *testing.B) {
@@ -20,9 +22,11 @@ func BenchmarkAtomicGet(b *testing.B) {
 	var v bool
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		v = a.value()
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			v = a.value()
+		}
+	})
 
 	t = v
 }
@@ -31,9 +35,11 @@ func BenchmarkMutex(b *testing.B) {
 	s := safeBool{}
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		s.setValue(true)
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			s.setValue(true)
+		}
+	})
 }
 
 func BenchmarkMutexGet(b *testing.B) {
@@ -43,9 +49,11 @@ func BenchmarkMutexGet(b *testing.B) {
 	var v bool
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		v = s.value()
-	}
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			v = s.value()
+		}
+	})
 
 	t = v
 }
