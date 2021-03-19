@@ -1,3 +1,5 @@
+// +build !tray
+
 package main
 
 func main() {
