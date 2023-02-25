@@ -22,6 +22,6 @@ require (
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/mattn/go-sqlite3 v1.10.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )
